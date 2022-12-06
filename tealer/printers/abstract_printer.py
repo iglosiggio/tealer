@@ -55,6 +55,10 @@ class AbstractPrinter(metaclass=abc.ABCMeta):  # pylint: disable=too-few-public-
 
     def __init__(self, teal: "Teal"):
         self.teal = teal
+        program_sanitized = self.teal.program.replace("/", "_").replace("\\", "_")
+        if program_sanitized.endswith(".teal"):
+            program_sanitized = program_sanitized[:-len(".teal")]
+        self.program_sanitized = program_sanitized
 
         if not self.NAME:
             raise IncorrectPrinterInitialization(

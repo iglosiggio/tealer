@@ -99,7 +99,7 @@ class PrinterCallGraph(AbstractPrinter):  # pylint: disable=too-few-public-metho
         dot_output += graph_edges
         dot_output += "}\n"
 
-        filename = Path("call-graph.dot")
+        filename = Path(f"{self.program_sanitized}.call-graph.dot")
         if dest is not None:
             filename = dest / filename
 

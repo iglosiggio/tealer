@@ -455,7 +455,7 @@ def _verify_version(ins_list: List[Instruction], program_version: int) -> bool:
     return error
 
 
-def parse_teal(source_code: str) -> Teal:
+def parse_teal(program: str, source_code: str) -> Teal:
     """Parse algorand smart contracts written in teal.
 
     Parsing teal cotracts consists of four passes:
@@ -472,6 +472,7 @@ def parse_teal(source_code: str) -> Teal:
     subroutines identified in the contract.
 
     Args:
+        program: Filename of the contract.
         source_code: TEAL source code of the contract.
 
     Returns:
@@ -509,7 +510,7 @@ def parse_teal(source_code: str) -> Teal:
             label_ins = labels[subroutine_label]
             subroutines.append(_identify_subroutine_blocks(label_ins))
 
-    teal = Teal(instructions, all_bbs, version, mode, subroutines)
+    teal = Teal(program, instructions, all_bbs, version, mode, subroutines)
 
     # set teal instance to it's basic blocks
     for bb in teal.bbs:

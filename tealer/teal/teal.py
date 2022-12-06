@@ -63,6 +63,7 @@ class Teal:
     on the contract.
 
     Args:
+        program: Filename of the contract being represented.
         instructions: List of parsed instruction objects.
         bbs: List of basic blocks representing the Control Flow Graph(CFG)
             of the contract.
@@ -76,12 +77,14 @@ class Teal:
 
     def __init__(  # pylint: disable=too-many-arguments
         self,
+        program: str,
         instructions: List[Instruction],
         bbs: List[BasicBlock],
         version: int,
         mode: ContractType,
         subroutines: List[List["BasicBlock"]],
     ):
+        self._program = program
         self._instructions = instructions
         self._bbs = bbs
         self._version = version
@@ -90,6 +93,11 @@ class Teal:
 
         self._detectors: List[AbstractDetector] = []
         self._printers: List[AbstractPrinter] = []
+
+    @property
+    def program(self) -> str:
+        """Filename of the contract"""
+        return self._program
 
     @property
     def instructions(self) -> List[Instruction]:

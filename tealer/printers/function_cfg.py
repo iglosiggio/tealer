@@ -98,7 +98,7 @@ class PrinterFunctionCFG(AbstractPrinter):  # pylint: disable=too-few-public-met
 
             dot_output = self._subroutine_to_dot(sub)
 
-            filename = Path(f"function_{sub_name}_cfg.dot")
+            filename = Path(f"{self.program_sanitized}.function_{sub_name}_cfg.dot")
             if dest is not None:
                 filename = dest / filename
 

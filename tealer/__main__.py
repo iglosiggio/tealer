@@ -190,7 +190,11 @@ def parse_args(
         usage="tealer program.teal [flag]",
     )
 
-    parser.add_argument("program", help="program.teal")
+    parser.add_argument(
+        "programs",
+        help="program.teal",
+        nargs="+"
+    )
 
     parser.add_argument(
         "--version",
@@ -203,7 +207,7 @@ def parse_args(
         "--print-cfg",
         nargs="?",
         help="export cfg in dot format to given file, default cfg.dot",
-        const="cfg.dot",
+        const="%s.cfg.dot",
     )
 
     group_detector = parser.add_argument_group("Detectors")
@@ -412,9 +416,16 @@ def handle_print_cfg(args: argparse.Namespace, teal: "Teal") -> None:
         teal: Teal object representing the contract being analyzed.
     """
 
+    program_sanitized = teal.program.replace("/", "_").replace("\\", "_")
+    if program_sanitized.endswith(".teal"):
+        program_sanitized = program_sanitized[:-len(".teal")]
+
     filename = args.print_cfg
+    if filename.find("%s") == -1:
+        filename = f"%s.{filename}"
     if not filename.endswith(".dot"):
         filename += ".dot"
+    filename = filename % (program_sanitized)
 
     filename = Path(args.dest) / Path(filename)
     print(f"\nCFG exported to file: {filename}")
@@ -511,17 +522,20 @@ def main() -> None:
     _results_printers: List = []
     error = None
     try:
-        with open(args.program, encoding="utf-8") as f:
-            print(f"Analyzing {args.program}")
-            teal = parse_teal(f.read())
+        for program in args.programs:
+            with open(program, encoding="utf-8") as f:
+                print(f"Analyzing {program}")
+                teal = parse_teal(program, f.read())
 
-        if args.print_cfg is not None:
-            handle_print_cfg(args, teal)
-            return
+            if args.print_cfg is not None:
+                handle_print_cfg(args, teal)
+                continue
 
-        results_detectors, _results_printers = handle_detectors_and_printers(
-            args, teal, detector_classes, printer_classes
-        )
+            program_results_detectors, _program_results_printers = handle_detectors_and_printers(
+                args, teal, detector_classes, printer_classes
+            )
+            results_detectors += program_results_detectors
+            _results_printers += _program_results_printers
 
     except TealerException as e:
         error = str(e)
