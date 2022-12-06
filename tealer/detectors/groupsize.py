@@ -25,8 +25,8 @@ class MissingGroupSize(AbstractDetector):  # pylint: disable=too-few-public-meth
     DESCRIPTION = "Detect paths with a missing GroupSize check"
     TYPE = DetectorType.STATEFULLGROUP
 
-    def __init__(self, teal: Teal):
-        super().__init__(teal)
+    def __init__(self, teal: Teal, program: str):
+        super().__init__(teal, program)
         self.results_number = 0
 
     def _check_groupsize(
@@ -54,7 +54,7 @@ class MissingGroupSize(AbstractDetector):  # pylint: disable=too-few-public-meth
                         if prev.value == 0:
                             return
 
-                filename = Path(f"group_size_{self.results_number}.dot")
+                filename = Path(f"{self.program_sanitized}.group_size_{self.results_number}.dot")
                 self.results_number += 1
                 all_results.append(Result(filename, current_path, self.results_number))
 

@@ -63,7 +63,7 @@ class MissingRekeyTo(AbstractDetector):
 
                 for idx, bbs in group_tx.items():
                     bbs_list = sorted(bbs, key=lambda x: x.instructions[0].line)
-                    filename = Path(f"rekeyto_tx_{idx}.dot")
+                    filename = Path(f"{self.program_sanitized}.rekeyto_tx_{idx}.dot")
 
                     if idx not in all_results:
                         all_results[str(idx)] = Result(filename, bbs_list + [bb], current_path)

@@ -91,7 +91,7 @@ class CanUpdate(AbstractDetector):  # pylint: disable=too-few-public-methods
         all_results_txt: List[str] = []
         idx = 1
         for path in paths_without_check:
-            filename = Path(f"can_update_{idx}.dot")
+            filename = Path(f"{self.program_sanitized}.can_update_{idx}.dot")
             idx += 1
             description = "Lack of OnCompletion check allows to update the app\n"
             description += f"\tCheck the path in {filename}\n"

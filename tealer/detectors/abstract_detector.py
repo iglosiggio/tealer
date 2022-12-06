@@ -30,8 +30,10 @@ class AbstractDetector(metaclass=abc.ABCMeta):  # pylint: disable=too-few-public
     DESCRIPTION = ""
     TYPE = DetectorType.UNDEFINED
 
-    def __init__(self, teal: Teal):
+    def __init__(self, teal: Teal, program: str):
         self.teal = teal
+        self.program = program
+        self.program_sanitized = program.replace("/", "_").replace("\\", "_")
 
         if not self.NAME:
             raise IncorrectDetectorInitialization(

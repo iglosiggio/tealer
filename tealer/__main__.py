@@ -16,7 +16,11 @@ def parse_args() -> argparse.Namespace:
         usage="teal_analyazer program.teal [flag]",
     )
 
-    parser.add_argument("program", help="program.teal")
+    parser.add_argument(
+        "programs",
+        help="program.teal",
+        nargs="+"
+    )
 
     parser.add_argument(
         "--print-cfg",
@@ -60,20 +64,22 @@ def main() -> None:
 
     args = parse_args()
 
-    with open(args.program) as f:
-        print(f"Analyze {args.program}")
-        teal = parse_teal(f.read())
+    for program in args.programs:
+        with open(program) as f:
+            print(f"Analyze {program}")
+            teal = parse_teal(f.read())
 
-    if args.print_cfg:
-        print("CFG exported: cfg.dot")
-        # teal.bbs_to_dot(Path("cfg.dot"))
-        teal.render_cfg(Path("cfg.dot"))
-
-    else:
-        for Cls in get_detectors():
-            d = Cls(teal)
-            for r in d.detect():
-                print(r)
+        if args.print_cfg:
+            program_sanitized = program.replace("/", "_").replace("\\", "_")
+            filename = f"{program_sanitized}.cfg.dot"
+            print("CFG exported:", filename)
+            # teal.bbs_to_dot(Path(filename))
+            teal.render_cfg(Path(filename))
+        else:
+            for Cls in get_detectors():
+                d = Cls(teal, program)
+                for r in d.detect():
+                    print(r)
 
 
 if __name__ == "__main__":
